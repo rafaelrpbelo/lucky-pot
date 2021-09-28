@@ -30,8 +30,6 @@ export function Summary() {
         </header>
         <strong>R$1000,00</strong>
       </div>
-
-      <h1>Summary</h1>
     </Container>
   )
 };

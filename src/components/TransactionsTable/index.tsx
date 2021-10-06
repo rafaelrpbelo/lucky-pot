@@ -1,10 +1,27 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../../services/api";
 import { Container } from "./styles";
 
+interface Transaction {
+  id: string;
+  title: string;
+  amount: number;
+  type: string;
+  category: string;
+  createdAt: string;
+}
+
+interface TransactionsResponse {
+  transactions: Transaction[];
+}
+
 export function TransactionsTable() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
   useEffect(() => {
-    api.get("transactions").then(({ data }) => console.log(data))
+    api
+      .get<TransactionsResponse>("transactions")
+      .then(response => setTransactions(response.data.transactions));
   }, []);
 
   return (
@@ -20,26 +37,25 @@ export function TransactionsTable() {
         </thead>
 
         <tbody>
-          <tr>
-            <td>Desenvolvimento de website</td>
-            <td className="deposit">R$12.000</td>
-            <td>Desenvolvimento</td>
-            <td>20/02/2021</td>
-          </tr>
-
-          <tr>
-            <td>Desenvolvimento de website</td>
-            <td className="deposit">R$12.000</td>
-            <td>Desenvolvimento</td>
-            <td>20/02/2021</td>
-          </tr>
-
-          <tr>
-            <td>Desenvolvimento de website</td>
-            <td className="withdraw">- R$12.000</td>
-            <td>Desenvolvimento</td>
-            <td>20/02/2021</td>
-          </tr>
+          {transactions.map(transaction => {
+            return (
+              <tr key={transaction.id}>
+                <td>{transaction.title}</td>
+                <td className={transaction.type}>
+                  {Intl.NumberFormat("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(transaction.amount / 100)}
+                </td>
+                <td>{transaction.category}</td>
+                <td>
+                  {Intl
+                    .DateTimeFormat("pt-br", { dateStyle: "short" })
+                    .format(new Date(transaction.createdAt))}
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </Container>

@@ -15,7 +15,7 @@ interface SummaryTotal {
 }
 
 export function Summary() {
-  const transactions = useContext(TransactionsContext);
+  const { transactions } = useContext(TransactionsContext);
 
   const [total, setTotal] = useState<SummaryTotal>({withdraw: 0, deposit: 0, total: 0});
 

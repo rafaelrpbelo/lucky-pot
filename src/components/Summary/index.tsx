@@ -6,27 +6,8 @@ import totalImg from "../../assets/total.svg";
 
 import { Container } from "./styles";
 
-interface SummaryTotal {
-  withdraw: number;
-  deposit: number;
-  total: number;
-}
-
 export function Summary() {
-  const { transactions } = useTransactions();
-
-  const summary = transactions.reduce((acc: SummaryTotal, item) => {
-    if (item.type === "withdraw") {
-      acc.withdraw += item.amount;
-      acc.total -= item.amount;
-    }
-    else if (item.type === "deposit") {
-      acc.deposit += item.amount;
-      acc.total += item.amount;
-    }
-
-    return acc;
-  }, {withdraw: 0, deposit: 0, total: 0});
+  const { summary } = useTransactions();
 
   return (
     <Container>

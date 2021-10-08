@@ -11,6 +11,12 @@ interface Transaction {
   createdAt: string;
 }
 
+interface TransactionsSummary {
+  withdraw: number;
+  deposit: number;
+  total: number;
+}
+
 type TransactionInput = Omit<Transaction, "id" | "createdAt">;
 
 interface TransactionsResponse {
@@ -24,6 +30,7 @@ interface TransactionsProviderProps {
 interface TransactionsContextData {
   transactions: Transaction[];
   createTransaction: (transaction: TransactionInput) => Promise<void>;
+  summary: TransactionsSummary;
 }
 
 interface TransactionResponse {
@@ -36,8 +43,33 @@ interface TransactionServerData {
 
 const TransactionsContext = createContext<TransactionsContextData>({} as TransactionsContextData);
 
+const summarize = (items: Transaction[]) => {
+  return items.reduce((acc, item) => {
+    if (item.type === "withdraw") {
+      acc.withdraw += item.amount;
+      acc.total -= item.amount;
+    }
+    else if (item.type === "deposit") {
+      acc.deposit += item.amount;
+      acc.total += item.amount;
+    }
+
+    return acc;
+  }, {withdraw: 0, deposit: 0, total: 0});
+}
+
 export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [summary, setSummary] = useState<TransactionsSummary>({
+    withdraw: 0,
+    deposit: 0,
+    total: 0,
+  });
+
+  useEffect(() => {
+    const result = summarize(transactions)
+    setSummary(result);
+  }, [transactions]);
 
   async function createTransaction(transactionInput: TransactionInput) {
     const response = await api.post<TransactionInput, TransactionServerData>("/transactions", transactionInput)
@@ -55,8 +87,12 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       .then(response => setTransactions(response.data.transactions))
   }, []);
 
+  useEffect(() => {
+
+  }, [transactions])
+
   return (
-    <TransactionsContext.Provider value={{ transactions, createTransaction }}>
+    <TransactionsContext.Provider value={{ transactions, createTransaction, summary }}>
       {children}
     </TransactionsContext.Provider>
   )

@@ -24,12 +24,12 @@ export function Summary() {
       transactions.reduce((acc: SummaryTotal, item) => {
         if (item.type === "withdraw") {
           acc.withdraw += item.amount;
+          acc.total -= item.amount;
         }
         else if (item.type === "deposit") {
           acc.deposit += item.amount;
+          acc.total += item.amount;
         }
-
-        acc.total += item.amount;
 
         return acc;
       }, {withdraw: 0, deposit: 0, total: 0})

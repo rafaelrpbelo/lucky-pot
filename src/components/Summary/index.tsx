@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 import { useTransactions } from "../../hooks/useTransactions";
 
 import incomeImg from "../../assets/income.svg";
@@ -17,26 +15,18 @@ interface SummaryTotal {
 export function Summary() {
   const { transactions } = useTransactions();
 
-  const [total, setTotal] = useState<SummaryTotal>({withdraw: 0, deposit: 0, total: 0});
+  const summary = transactions.reduce((acc: SummaryTotal, item) => {
+    if (item.type === "withdraw") {
+      acc.withdraw += item.amount;
+      acc.total -= item.amount;
+    }
+    else if (item.type === "deposit") {
+      acc.deposit += item.amount;
+      acc.total += item.amount;
+    }
 
-  const updateTotals = () => {
-    setTotal(
-      transactions.reduce((acc: SummaryTotal, item) => {
-        if (item.type === "withdraw") {
-          acc.withdraw += item.amount;
-          acc.total -= item.amount;
-        }
-        else if (item.type === "deposit") {
-          acc.deposit += item.amount;
-          acc.total += item.amount;
-        }
-
-        return acc;
-      }, {withdraw: 0, deposit: 0, total: 0})
-    )
-  }
-
-  useEffect(updateTotals, [transactions])
+    return acc;
+  }, {withdraw: 0, deposit: 0, total: 0});
 
   return (
     <Container>
@@ -47,7 +37,7 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(total.deposit / 100)}
+          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.deposit / 100)}
         </strong>
       </div>
 
@@ -58,7 +48,7 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(total.withdraw / 100)}
+          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.withdraw / 100)}
         </strong>
       </div>
 
@@ -69,7 +59,7 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(total.total / 100)}
+          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.total / 100)}
         </strong>
       </div>
     </Container>

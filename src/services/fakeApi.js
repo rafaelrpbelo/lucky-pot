@@ -1,15 +1,15 @@
-import { createServer, Model } from 'miragejs';
+import { createServer, Model } from "miragejs";
 
 const createNewTransaction = (schema, payload) => {
   const data = {
     ...payload,
     createdAt: new Date(),
-  }
+  };
 
-  return schema.create('transaction', data)
-}
+  return schema.create("transaction", data);
+};
 
-export const startFakeApi = () => {
+export function startFakeApi() {
   createServer({
     models: {
       transaction: Model,
@@ -42,20 +42,22 @@ export const startFakeApi = () => {
             amount: 10300,
             createdAt: new Date("2021-01-17 16:11:56"),
           },
-        ]
-      })
+        ],
+      });
     },
 
     routes() {
-      this.namespace = 'api';
+      this.namespace = "api";
 
-      this.get('/transactions', () => this.schema.all('transaction'))
+      this.get("/transactions", () => this.schema.all("transaction"));
 
-      this.post('/transactions', (schema, request) => {
+      this.post("/transactions", (schema, request) => {
         const data = JSON.parse(request.requestBody);
 
         return createNewTransaction(schema, data);
-      })
-    }
-  })
-};
+      });
+    },
+  });
+
+  return;
+}

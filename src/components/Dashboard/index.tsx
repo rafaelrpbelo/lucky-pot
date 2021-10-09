@@ -1,12 +1,15 @@
-import { Container } from "./styles"
-import { Summary } from "../Summary"
-import { TransactionsTable } from "../TransactionsTable"
+import { ReactElement } from "react";
 
-export function Dashboard() {
+import { Summary } from "../Summary";
+import { TransactionsTable } from "../TransactionsTable";
+
+import { Container } from "./styles";
+
+export function Dashboard(): ReactElement {
   return (
     <Container>
       <Summary />
       <TransactionsTable />
     </Container>
-  )
-};
+  );
+}

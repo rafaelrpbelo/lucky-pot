@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 import { useTransactions } from "../../hooks/useTransactions";
 
 import incomeImg from "../../assets/income.svg";
@@ -6,7 +8,7 @@ import totalImg from "../../assets/total.svg";
 
 import { Container } from "./styles";
 
-export function Summary() {
+export function Summary(): ReactElement {
   const { summary } = useTransactions();
 
   return (
@@ -18,7 +20,7 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.deposit / 100)}
+          {Intl.NumberFormat("pt-br", { style: "currency", currency: "BRL" }).format(summary.deposit / 100)}
         </strong>
       </div>
 
@@ -29,7 +31,7 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.withdraw / 100)}
+          {Intl.NumberFormat("pt-br", { style: "currency", currency: "BRL" }).format(summary.withdraw / 100)}
         </strong>
       </div>
 
@@ -40,9 +42,9 @@ export function Summary() {
         </header>
 
         <strong>
-          {Intl.NumberFormat("pt-br", {style: "currency", currency: "BRL"}).format(summary.total / 100)}
+          {Intl.NumberFormat("pt-br", { style: "currency", currency: "BRL" }).format(summary.total / 100)}
         </strong>
       </div>
     </Container>
-  )
-};
+  );
+}

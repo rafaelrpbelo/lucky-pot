@@ -1,6 +1,6 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, createContext, useContext, ReactNode, ReactElement } from "react";
 
-import { api } from "../services/api"
+import { api } from "../services/api";
 
 interface Transaction {
   id: string;
@@ -44,21 +44,23 @@ interface TransactionServerData {
 const TransactionsContext = createContext<TransactionsContextData>({} as TransactionsContextData);
 
 const summarize = (items: Transaction[]) => {
-  return items.reduce((acc, item) => {
-    if (item.type === "withdraw") {
-      acc.withdraw += item.amount;
-      acc.total -= item.amount;
-    }
-    else if (item.type === "deposit") {
-      acc.deposit += item.amount;
-      acc.total += item.amount;
-    }
+  return items.reduce(
+    (acc, item) => {
+      if (item.type === "withdraw") {
+        acc.withdraw += item.amount;
+        acc.total -= item.amount;
+      } else if (item.type === "deposit") {
+        acc.deposit += item.amount;
+        acc.total += item.amount;
+      }
 
-    return acc;
-  }, {withdraw: 0, deposit: 0, total: 0});
-}
+      return acc;
+    },
+    { withdraw: 0, deposit: 0, total: 0 }
+  );
+};
 
-export function TransactionsProvider({ children }: TransactionsProviderProps) {
+export function TransactionsProvider({ children }: TransactionsProviderProps): ReactElement {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [summary, setSummary] = useState<TransactionsSummary>({
     withdraw: 0,
@@ -67,37 +69,28 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   });
 
   useEffect(() => {
-    const result = summarize(transactions)
+    const result = summarize(transactions);
     setSummary(result);
   }, [transactions]);
 
   async function createTransaction(transactionInput: TransactionInput) {
-    const response = await api.post<TransactionInput, TransactionServerData>("/transactions", transactionInput)
+    const response = await api.post<TransactionInput, TransactionServerData>("/transactions", transactionInput);
     const { transaction } = response.data;
 
-    setTransactions([
-      ...transactions,
-      transaction,
-    ]);
+    setTransactions([...transactions, transaction]);
   }
 
   useEffect(() => {
-    api
-      .get<TransactionsResponse>("transactions")
-      .then(response => setTransactions(response.data.transactions))
+    api.get<TransactionsResponse>("transactions").then((response) => setTransactions(response.data.transactions));
   }, []);
-
-  useEffect(() => {
-
-  }, [transactions])
 
   return (
     <TransactionsContext.Provider value={{ transactions, createTransaction, summary }}>
       {children}
     </TransactionsContext.Provider>
-  )
+  );
 }
 
-export function useTransactions() {
+export function useTransactions(): TransactionsContextData {
   return useContext(TransactionsContext);
 }

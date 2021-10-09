@@ -5,7 +5,7 @@ import { Header } from "./components/Header";
 import { Dashboard } from "./components/Dashboard";
 import { NewTransactionModal } from "./components/Modals/NewTransactionModal";
 
-import { TransactionsProvider } from "./hooks/useTransactions";
+import { TransactionsProvider } from "./contexts/TransactionContext";
 
 export function App(): ReactElement {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
